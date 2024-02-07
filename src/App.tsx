@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Header from './components/Header';
 import ML_2F from './images/ML_2F.jpg';
-import ML_4F from './images/ML_4F.jpg';
+import ML_2F_Grid from './images/ML_2F_Grid.jpg';
+import ML_4F from './images/ML_4F.png';
 import person from './images/person.png';
-import redpin from './images/redpin.png';
+import risk_person from './images/risk_person.png';
 import Modal from './components/Modal';
 import Button from './components/Button';
+import * as turf from '@turf/turf';
 
 interface PointProps {
   x: number;
@@ -24,8 +26,8 @@ const Wrapper = styled.div`
 
 const FloorPlan2F = styled.div`
   position: sticky;
-  width: 75%;
-  height: 732.75px;
+  width: 100%;
+  /* height: 732.75px; */
   background-image: url(${ML_2F});
   background-size: contain;
   background-repeat: no-repeat;
@@ -75,7 +77,6 @@ const Point = styled.div<PointProps>`
   position: absolute;
   width: 56px;
   height: 56px;
-  border-radius: 50%;
   top: ${props => props.y}px;
   left: ${props => props.x}px;
   background-image: url(${person});
@@ -83,7 +84,7 @@ const Point = styled.div<PointProps>`
   background-repeat: no-repeat;
 `
 const FallingPoint = styled(Point)`
-  background-image: url(${redpin});
+  background-image: url(${risk_person});
 `
 
 const Monitoring = styled.div`
@@ -130,7 +131,6 @@ const TabButton = styled.button<TabProps>`
   width: 80%;
 `;
 
-
 function App() {
   const [worker, setWorker] = useState(0);
   const [safetyBelt, setSafetyBelt] = useState(0);
@@ -145,12 +145,32 @@ function App() {
     setActiveTab(tabNumber);
   }
 
-  const handleCloseModal = () => {
-    setModalOpen(false);
+  const xRatio = (x: number) : number => {
+    return x - 28; // x - Point 넓이
   }
 
-  const pointRatio = (x: number) : number => {
-    return (x - 13.5) * 0.75;
+  const yRatio = (x: number) : number => {
+    return x - 56; // x - Point 넓이
+  }
+  
+let point = turf.point([xRatio(247), yRatio(84)]);
+
+let polygonA = turf.polygon([[[246, 62], [572, 396], [572, 686], [572, 728], [460, 727], [460, 686], [49, 260], [128, 177], [87, 131], [117, 97], [130, 109], [185, 59], [214, 89], [246, 62]]]);
+let polygonB = turf.polygon([[[573, 396], [1024, 396], [1024, 686], [573, 686], [573, 396]]]);
+let polygonC = turf.polygon([[[1025, 396], [1392, 396], [1392, 686], [1155, 686], [1155, 763], [1025, 763], [1025, 686], [1025, 396]]]);
+
+if (turf.booleanPointInPolygon(point, polygonA)) {
+    console.log('The point is in region A');
+} else if (turf.booleanPointInPolygon(point, polygonB)) {
+    console.log('The point is in region B');
+} else if (turf.booleanPointInPolygon(point, polygonC)) {
+    console.log('The point is in region C');
+} else {
+    console.log('The point is outside the regions');
+}
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
   }
 
   return (
@@ -159,8 +179,13 @@ function App() {
       <Wrapper>
         {activeTab === 2 ? (
           <FloorPlan2F>
-            <Point x={pointRatio(1385)} y={pointRatio(685)} />
-            <Point x={pointRatio(1090)} y={pointRatio(495)} />
+            <Point x={xRatio(205)} y={yRatio(185)} />
+            {falling ? (
+              <>
+                {/* <FallingPoint x={xRatio(661)} y={yRatio(764)} /> */}
+                <Modal isOpened={isModalOpen} onClose={handleCloseModal} content={`${section}구역에서 낙상 사고가 발생하였습니다.`}></Modal>
+              </>
+            ) : <></>}
             <TabWrapper>
               <TabButton active={true} onClick={() => handleTabClick(2)}>
                 2F
@@ -217,12 +242,7 @@ function App() {
             </Worker>
           </WorkerList>
         </ListWrapper>
-        {falling ? (
-          <>
-            <FallingPoint x={pointRatio(840)} y={pointRatio(810)} />
-            <Modal isOpened={isModalOpen} onClose={handleCloseModal} content={`${section}구역에서 낙상 사고가 발생하였습니다.`}></Modal>
-          </>
-        ) : <></>}
+        
       </Wrapper>
       
     </>
