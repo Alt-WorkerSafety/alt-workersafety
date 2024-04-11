@@ -2,17 +2,24 @@ import S from './Button.styled';
 import { ButtonProps } from './types';
 
 const Button: React.FC<ButtonProps> = ({
-    children,
-    falling,
-    safebelt,
+    type,
+    value,
 }) => {
-    const isRed = falling || safebelt === false;
-
-    return (
-        <>
-            {isRed ? <S.RedButton>{children}</S.RedButton> : <S.GreenButton>{children}</S.GreenButton>}
-        </>
-    )
+    if (type === 'fall') {
+        return (
+            <>
+                {value ? <S.RedButton>위험</S.RedButton> : <S.GreenButton>안전</S.GreenButton>}
+            </>
+        );
+    } else if (type === 'ring') {
+        return (
+            <>
+                {value ? <S.GreenButton>안전</S.GreenButton> : <S.RedButton>위험</S.RedButton>}
+            </>
+        );
+    } else {
+        return null;
+    }
 }
 
 export default Button;

@@ -1,7 +1,5 @@
 import styled from 'styled-components';
-import ML_2F from '../images/ML_2F.jpg';
-import ML_2F_Grid from '../images/ML_2F_Grid.jpg';
-import ML_4F from '../images/ML_4F.png';
+import ML from '../images/ML_district.png';
 import person from '../images/person.png';
 import risk_person from '../images/risk_person.png';
 
@@ -10,62 +8,63 @@ interface PointProps {
     y: number;
   }
   
-  interface TabProps {
+  interface ButtonProps {
     active: boolean;
   }  
 
+const Layout = styled.div`
+  display: flex;
+`;
+
 const Wrapper = styled.div`
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  width: 80%;
 `;
 
-const FloorPlan2F = styled.div`
-  position: sticky;
+const TitleText = styled.div`
+  font-size: 40px;
+  font-weight: bold;
+  color: black;
+  padding: 16px;
+`;
+
+const FloorPlan = styled.div`
   width: 100%;
-  /* height: 732.75px; */
-  background-image: url(${ML_2F});
+  height: 200px;
+  background-image: url(${ML});
   background-size: contain;
   background-repeat: no-repeat;
+  border: 2px solid black;
+  margin: 20px;
+  border-radius: 10px;
 `;
 
-const FloorPlan4F = styled(FloorPlan2F)`
-  background-image: url(${ML_4F});
-`
-
 const ListWrapper = styled.div`
-  width: 30%;
-  padding: 30px 18px;
+  height: 200px;
   text-align: center;
   font-size: 24px;
   font-weight: bold;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  border: 2px solid black;
+  border-radius: 10px;
+  margin: 20px;
 `;
 
 const WorkerList = styled.div`
-  display: flex;
-  flex-direction: column;
-  border-radius: 10px;
-  background-color: #535353;
-  color: white;
-  padding: 16px 12px;
-  margin-top: 20px;
-  height: 500px;
-  box-shadow: 5px 3px #333333;
-`;
-
-const Worker = styled.div`
-  width: 100%;
-  margin: 0 auto;
-  display: flex;
-  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin: 8px 0;
 `;
 
 const WorkerInfo = styled.div`
   width: 100%;
   font-size: 16px;
   font-weight: normal;
+  text-align: center;
 `;
 
 const Point = styled.div<PointProps>`
@@ -82,48 +81,4 @@ const FallingPoint = styled(Point)`
   background-image: url(${risk_person});
 `
 
-const Monitoring = styled.div`
-  width: 100%;
-  height: 70px;
-  display: flex;
-  justify-content: space-between;
-  margin: 20px 0 50px 0;
-  padding: 10px 0;
-  border-radius: 10px;
-  background-color: #535353;
-  color: white;
-  box-shadow: 5px 3px #333333;
-  
-`
-const Content = styled.div`
-  width: 100%;
-  align-items: center;
-  padding: 10px 0;
-  text-align: center;
-  font-size: 18px;
-`
-
-const CurrentNumber = styled.div`
-  color: #a0c9ff;
-  font-size: 24px;
-`
-
-const TabWrapper = styled.div`
-  display: flex;
-  border-radius: 10px;
-  margin-left: auto;
-  margin-top: 18px;
-  width: 320px;
-`;
-
-const TabButton = styled.button<TabProps>`
-  padding: 10px 20px;
-  background-color: ${(props) => (props.active ? '#747474' : '#ccc')};
-  color: ${(props) => (props.active ? '#fff' : '#747474')};
-  border: none;
-  outline: none;
-  cursor: pointer;
-  width: 80%;
-`;
-
-export default {Wrapper, FloorPlan2F, FloorPlan4F, ListWrapper, WorkerList, Worker, WorkerInfo, Point, FallingPoint, Monitoring, Content, CurrentNumber, TabWrapper, TabButton}
+export default {Layout, Wrapper, TitleText, FloorPlan, ListWrapper, WorkerList, Worker, WorkerInfo, Point, FallingPoint}
