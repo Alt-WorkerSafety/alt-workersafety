@@ -97,18 +97,12 @@ function App() {
           <S.TitleText>Dashboard</S.TitleText>
           <S.ListWrapper>
             <S.WorkerList>
-                <S.WorkerInfo>이름</S.WorkerInfo>
-                <S.WorkerInfo>생년월일</S.WorkerInfo>
-                <S.WorkerInfo>전화번호</S.WorkerInfo>
-                <S.WorkerInfo>안전고리</S.WorkerInfo>
-                <S.WorkerInfo>낙상여부</S.WorkerInfo>
-
-                <S.WorkerInfo>봉봉</S.WorkerInfo> 
-                <S.WorkerInfo>24.04.08</S.WorkerInfo>
-                <S.WorkerInfo>010-1234-1234</S.WorkerInfo>
-                <S.WorkerInfo><Button type='ring' value={true} /></S.WorkerInfo>  
-                <S.WorkerInfo><Button type='fall' value={true} /></S.WorkerInfo>   
-              {workers.map((worker) => { // 나중에 수정 필요
+              <S.WorkerInfo>이름</S.WorkerInfo>
+              <S.WorkerInfo>생년월일</S.WorkerInfo>
+              <S.WorkerInfo>전화번호</S.WorkerInfo>
+              <S.WorkerInfo>안전고리</S.WorkerInfo>
+              <S.WorkerInfo>낙상여부</S.WorkerInfo>   
+              {workers.map((worker) => {
                 return (
                   <>
                     <S.WorkerInfo>{worker.name}</S.WorkerInfo> 
