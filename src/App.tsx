@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Modal from './components/Modal';
 import Button from './components/Button';
+import Box from './components/Box';
 import { getWorkerDetails } from './api/getWorkerDetails';
 import { getWorkers } from './api/getWorkers';
 import S from './styles/AppStyles';
@@ -39,10 +40,9 @@ function App() {
     isSafe: boolean;
   }
 
+  
   const [worker1, setWorker1] = useState<Worker[] | null>(null);
   const [worker2, setWorker2] = useState<Worker[] | null>(null);
-
-  
 
   useEffect(() => {
       fetchWorkersDetails();
@@ -89,11 +89,29 @@ function App() {
     setModalOpen(true);
   }
 
+  const status1 = worker1 !== null && worker1.length > 0;
+  const status2 = worker2 !== null && worker2.length > 0;
+  
+  const district: {[key: string]: { x: number, y: number }} = {
+    'A': { x: 302, y: 152 },
+    'B': { x: 342, y: 152 },
+    'C': { x: 382, y: 152 },
+    'D': { x: 422, y: 152 },
+    'E': { x: 462, y: 152 },
+    'F': { x: 502, y: 152 },
+    'G': { x: 542, y: 152 },
+    'H': { x: 582, y: 152 },
+    'I': { x: 622, y: 152 },
+    'J': { x: 662, y: 152 },
+  };
+  
+  const { x, y } = district[worker1? worker1[2].district: 'J'];
+
   return (
     <>
-    <S.Layout>
+    <S.RowWrapper>
       <Header />
-        <S.Wrapper>
+        <S.ColumnWrapper>
           <S.TitleText>Dashboard</S.TitleText>
           <S.ListWrapper>
             <S.WorkerList>
@@ -108,26 +126,40 @@ function App() {
                     <S.WorkerInfo>{worker.name}</S.WorkerInfo> 
                     <S.WorkerInfo>{worker.birth}</S.WorkerInfo>
                     <S.WorkerInfo>{worker.pn}</S.WorkerInfo>
+                    <Button type="ring" value={true}></Button>
+                    <Button type="fall" value={false}></Button>
                   </>
                 );
               })}
             </S.WorkerList>
           </S.ListWrapper>
-          <S.Layout>
+          <S.RowWrapper>
+            <S.FloorPlanWrapper>
             <S.FloorPlan>
+                {/* <S.Point x={302} y={152}/> */}
+                <S.Point x={x} y={y} />
                 {(worker1 && worker1[3].isFalling) ? (
                   <>
                     <Modal isOpened={isModalOpen} onClose={handleCloseModal} content={`${worker1[2].district}구역에서 낙상 사고가 감지되었습니다.`}></Modal>
+                    
                   </>
                 ) : (worker2 && worker2[3].isFalling) ? (
                   <>
                     <Modal isOpened={isModalOpen} onClose={handleCloseModal} content={`${worker2[2].district}구역에서 낙상 사고가 감지되었습니다.`}></Modal>
                   </>
                 ): <></> }
-              </S.FloorPlan> 
-            </S.Layout>
-          </S.Wrapper>   
-      </S.Layout>
+              </S.FloorPlan>
+              </S.FloorPlanWrapper>
+              <S.StatusWrapper>
+                  Device
+                  <S.RowWrapper>
+                    <Box index={1} status={status1} />
+                    <Box index={2} status={status2} />
+                  </S.RowWrapper>
+              </S.StatusWrapper> 
+            </S.RowWrapper>
+          </S.ColumnWrapper>   
+      </S.RowWrapper>
     </>
     
   );
