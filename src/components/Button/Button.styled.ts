@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { ButtonProps } from './types';
 
 const RedButton = styled.div`
   background-color: red;
