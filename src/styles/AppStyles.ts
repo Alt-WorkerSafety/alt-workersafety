@@ -7,10 +7,6 @@ interface PointProps {
     x: number;
     y: number;
   }
-  
-  interface ButtonProps {
-    active: boolean;
-  }  
 
 const RowWrapper = styled.div`
   display: flex;
@@ -48,31 +44,35 @@ const FloorPlan = styled.div`
 `;
 
 const ListWrapper = styled.div`
-  height: 200px;
   text-align: center;
-  font-size: 24px;
+  font-size: 18px;
   font-weight: bold;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  border: 2px solid black;
-  border-radius: 10px;
+  border: 1px solid black;
   margin: 20px;
 `;
 
 const WorkerList = styled.div`
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 10px;
-  margin: 8px 0;
+  display: table;
 `;
 
 const WorkerInfo = styled.div`
-  width: 100%;
-  font-size: 16px;
-  font-weight: normal;
-  text-align: center;
+  display: table-cell;
+  padding: 10px;
+  border: 1px solid black;
 `;
+
+const WorkerInfoTitle = styled.div`
+  display: table-row;
+  background-color: #E6E6E6;
+  font-weight: bold;
+`;
+
+const WorkerInfoWrapper = styled(WorkerInfoTitle)`
+  background-color: white;
+  font-weight: normal;
+`
 
 const StatusWrapper = styled.div`
   display: flex;
@@ -100,4 +100,4 @@ const FallingPoint = styled(Point)`
   background-image: url(${risk_person});
 `
 
-export default {RowWrapper, ColumnWrapper, TitleText, FloorPlanWrapper, FloorPlan, ListWrapper, WorkerList, WorkerInfo, StatusWrapper, Point, FallingPoint}
+export default {RowWrapper, ColumnWrapper, TitleText, FloorPlanWrapper, FloorPlan, ListWrapper, WorkerList, WorkerInfo, WorkerInfoTitle, WorkerInfoWrapper, StatusWrapper, Point, FallingPoint}

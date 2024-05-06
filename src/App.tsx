@@ -115,19 +115,29 @@ function App() {
           <S.TitleText>Dashboard</S.TitleText>
           <S.ListWrapper>
             <S.WorkerList>
-              <S.WorkerInfo>이름</S.WorkerInfo>
-              <S.WorkerInfo>생년월일</S.WorkerInfo>
-              <S.WorkerInfo>전화번호</S.WorkerInfo>
-              <S.WorkerInfo>안전고리</S.WorkerInfo>
-              <S.WorkerInfo>낙상여부</S.WorkerInfo>   
+              <S.WorkerInfoTitle>
+                <S.WorkerInfo>조끼번호</S.WorkerInfo>
+                <S.WorkerInfo>이름</S.WorkerInfo>
+                <S.WorkerInfo>생년월일</S.WorkerInfo>
+                <S.WorkerInfo>전화번호</S.WorkerInfo>
+                <S.WorkerInfo>안전고리</S.WorkerInfo>
+                <S.WorkerInfo>낙상여부</S.WorkerInfo>
+              </S.WorkerInfoTitle>
+
               {workers.map((worker) => {
                 return (
                   <>
-                    <S.WorkerInfo>{worker.name}</S.WorkerInfo> 
-                    <S.WorkerInfo>{worker.birth}</S.WorkerInfo>
-                    <S.WorkerInfo>{worker.pn}</S.WorkerInfo>
-                    <Button type="ring" value={true}></Button>
-                    <Button type="fall" value={false}></Button>
+                    <S.WorkerInfoWrapper>
+                      <S.WorkerInfo>{worker.name}</S.WorkerInfo> 
+                      <S.WorkerInfo>{worker.birth}</S.WorkerInfo>
+                      <S.WorkerInfo>{worker.pn}</S.WorkerInfo>
+                      <S.WorkerInfo>
+                        <Button type="ring" value={true}></Button>
+                      </S.WorkerInfo>
+                      <S.WorkerInfo>
+                        <Button type="fall" value={false}></Button>
+                      </S.WorkerInfo>
+                    </S.WorkerInfoWrapper>
                   </>
                 );
               })}
