@@ -8,13 +8,15 @@ const Button: React.FC<ButtonProps> = ({
     if (type === 'fall') {
         return (
             <>
-                {value ? <S.RedButton>위험</S.RedButton> : <S.GreenButton>안전</S.GreenButton>}
+                
+                {value ? <S.RedButton><S.RedLight></S.RedLight>Risk</S.RedButton> : <S.GreenButton><S.GreenLight></S.GreenLight>Safe</S.GreenButton>}
             </>
         );
     } else if (type === 'ring') {
         return (
             <>
-                {value ? <S.GreenButton>안전</S.GreenButton> : <S.RedButton>위험</S.RedButton>}
+                
+                {value ? <S.GreenButton><S.GreenLight></S.GreenLight>Safe</S.GreenButton> : <S.RedButton><S.RedLight></S.RedLight>Risk</S.RedButton>}
             </>
         );
     } else {
