@@ -3,21 +3,29 @@ import Header from './components/Header';
 import Modal from './components/Modal';
 import Button from './components/Button';
 import Box from './components/Box';
-import { getWorkerDetails } from './api/getWorkerDetails';
+//import { getWorkerDetails } from './api/getWorkerDetails';
 import { getWorkers } from './api/getWorkers';
 import S from './styles/AppStyles';
 
 function App() {
   interface Workers {
+    id: number;
     name: string;
     birth: string;
     pn: string;
+    district: string | null;
+    isFalling: boolean | null;
+    isSafe: boolean | null;
   }
 
-  const [workers, setWorkers] = useState<Workers[]>([]);
+  const [workers, setWorkers] = useState<Workers[][]>([]);
 
   useEffect(() => {
-    fetchWorkers();
+      fetchWorkers();
+
+      const interval = setInterval(fetchWorkers, 3000);  // 3초마다 업데이트
+
+      return () => clearInterval(interval);
   }, []);
 
   const fetchWorkers = () => {
@@ -31,54 +39,52 @@ function App() {
       });
   }
 
-  interface Worker {
-    name: string;
-    birth: string;
-    pn: string;
-    district: string;
-    isFalling: boolean;
-    isSafe: boolean;
-  }
+  // 작업자 1, 2 분리할 경우 (현재 사용 X)
+  // interface Worker {
+  //   name: string;
+  //   birth: string;
+  //   pn: string;
+  //   district: string;
+  //   isFalling: boolean;
+  //   isSafe: boolean;
+  // }
 
   
-  const [worker1, setWorker1] = useState<Worker[] | null>(null);
-  const [worker2, setWorker2] = useState<Worker[] | null>(null);
+  // const [worker1, setWorker1] = useState<Worker[] | null>(null);
+  // const [worker2, setWorker2] = useState<Worker[] | null>(null);
 
-  useEffect(() => {
-      fetchWorkersDetails();
+  // useEffect(() => {
+  //     fetchWorkersDetails();
 
-      const interval = setInterval(fetchWorkersDetails, 3000);  // 3초마다 업데이트
+  //     const interval = setInterval(fetchWorkersDetails, 3000);  // 3초마다 업데이트
 
-      return () => clearInterval(interval);
-  }, []);
+  //     return () => clearInterval(interval);
+  // }, []);
 
-  const fetchWorkersDetails = () => {
-    Promise.all([
-        getWorkerDetails(1),
-        getWorkerDetails(2)
-    ]).then((responses) => {
-      const statusCodes = responses.map(response => response.status);
+  // const fetchWorkersDetails = () => {
+  //   Promise.all([
+  //       getWorkerDetails(1),
+  //       getWorkerDetails(2)
+  //   ]).then((responses) => {
+  //     const statusCodes = responses.map(response => response.status);
 
-      if (statusCodes.every(code => code >= 200 && code < 300)) {
-        const workersData = responses.map(response => response.data);
-        setWorker1(workersData[0]);
-        setWorker2(workersData[1]);
-      } else {
-        throw new Error('WorkerDetail: Network response was not ok!');
-      }  
-      });
-  };
+  //     if (statusCodes.every(code => code >= 200 && code < 300)) {
+  //       const workersData = responses.map(response => response.data);
+  //       setWorker1(workersData[0]);
+  //       setWorker2(workersData[1]);
+  //     } else {
+  //       throw new Error('WorkerDetail: Network response was not ok!');
+  //     }  
+  //     });
+  // };
 
   // 임시
-  if (worker1) {
-    console.log('worker1 위치: ', worker1[2].district)
-    console.log('worker1 낙상여부: ', worker1[3].isFalling)
-    console.log('worker1 안전고리여부: ', worker1[4].isSafe)
-  }
-  if (worker2) {
-    console.log('worker2 위치: ', worker2[2].district)
-    console.log('worker2 낙상여부: ', worker2[3].isFalling)
-    console.log('worker2 안전고리여부: ', worker2[4].isSafe)
+  console.log('Workers : ', workers);
+  if (Array.isArray(workers[0])) {
+      console.log('worker1 raspi: ', workers[0][1].birth);
+      console.log('worker1 raspi: ', workers[0][1].name);
+  } else {
+      console.log('No workers available.');
   }
   
 
@@ -88,10 +94,7 @@ function App() {
   const handleCloseModal = () => {
     setModalOpen(true);
   }
-
-  const status1 = worker1 !== null && worker1.length > 0;
-  const status2 = worker2 !== null && worker2.length > 0;
-  
+ 
   const district: {[key: string]: { x: number, y: number }} = {
     'A': { x: 302, y: 152 },
     'B': { x: 342, y: 152 },
@@ -105,7 +108,7 @@ function App() {
     'J': { x: 662, y: 152 },
   };
   
-  const { x, y } = district[worker1? worker1[2].district: 'J'];
+  //const { x1, y1 } = district[workers[0]? workers[0][2].district: 'J'];
 
   return (
     <>
@@ -123,48 +126,71 @@ function App() {
                 <S.WorkerInfo>안전고리</S.WorkerInfo>
                 <S.WorkerInfo>낙상여부</S.WorkerInfo>
               </S.WorkerInfoTitle>
-
-              {workers.map((worker) => {
-                return (
-                  <>
+               
+              {workers.length > 0 ? (
+                workers.map((worker, index) => {
+                  return (
+                    <>
                     <S.WorkerInfoWrapper>
-                      <S.WorkerInfo>{worker.name}</S.WorkerInfo> 
-                      <S.WorkerInfo>{worker.birth}</S.WorkerInfo>
-                      <S.WorkerInfo>{worker.pn}</S.WorkerInfo>
-                      <S.WorkerInfo>
-                        <Button type="ring" value={true}></Button>
-                      </S.WorkerInfo>
-                      <S.WorkerInfo>
-                        <Button type="fall" value={false}></Button>
-                      </S.WorkerInfo>
+                    <React.Fragment key={index + 1}>
+                        <S.WorkerInfo>{index + 1}</S.WorkerInfo> 
+                        <S.WorkerInfo>{worker[1].name || ''}</S.WorkerInfo> 
+                        <S.WorkerInfo>{worker[1].birth || ''}</S.WorkerInfo>
+                        <S.WorkerInfo>{worker[1].pn || ''}</S.WorkerInfo>
+                        <S.WorkerInfo>
+                          <Button type="ring" value={worker[4].isSafe || null} ></Button>
+                        </S.WorkerInfo>
+                        <S.WorkerInfo>
+                          <Button type="fall" value={worker[3].isFalling || null}></Button>
+                        </S.WorkerInfo>
+                      </React.Fragment>
                     </S.WorkerInfoWrapper>
-                  </>
-                );
-              })}
+                    </>
+                  );
+                })
+              ): (
+                Array.from({ length: 2 }).map((_, index) => (
+                  <S.WorkerInfoWrapper>
+                  <React.Fragment key={index}>
+                    <S.WorkerInfo>{index + 1}</S.WorkerInfo>
+                    <S.WorkerInfo></S.WorkerInfo>
+                    <S.WorkerInfo></S.WorkerInfo>
+                    <S.WorkerInfo></S.WorkerInfo>
+                    <S.WorkerInfo>
+                      <Button type="ring" value={null}></Button>
+                    </S.WorkerInfo>
+                    <S.WorkerInfo>
+                      <Button type="fall" value={null}></Button>
+                    </S.WorkerInfo>
+                  </React.Fragment>
+                  </S.WorkerInfoWrapper>
+                ))
+              )
+            }
             </S.WorkerList>
           </S.ListWrapper>
           <S.RowWrapper>
             <S.FloorPlanWrapper>
             <S.FloorPlan>
                 {/* <S.Point x={302} y={152}/> */}
-                <S.Point x={x} y={y} />
-                {(worker1 && worker1[3].isFalling) ? (
+                {/* <S.Point x={x} y={y} /> */}
+                {/* {(workers && workers[3].isFalling) ? (
                   <>
                     <Modal isOpened={isModalOpen} onClose={handleCloseModal} content={`${worker1[2].district}구역에서 낙상 사고가 감지되었습니다.`}></Modal>
                     
                   </>
-                ) : (worker2 && worker2[3].isFalling) ? (
+                ) : (workers && workers[3].isFalling) ? (
                   <>
                     <Modal isOpened={isModalOpen} onClose={handleCloseModal} content={`${worker2[2].district}구역에서 낙상 사고가 감지되었습니다.`}></Modal>
                   </>
-                ): <></> }
+                ): <></> } */}
               </S.FloorPlan>
               </S.FloorPlanWrapper>
               <S.StatusWrapper>
                   Device
                   <S.RowWrapper>
-                    <Box index={1} status={status1} />
-                    <Box index={2} status={status2} />
+                    <Box index={1} status={true} />
+                    <Box index={2} status={false} />
                   </S.RowWrapper>
               </S.StatusWrapper> 
             </S.RowWrapper>
