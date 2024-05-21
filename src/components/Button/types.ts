@@ -1,4 +1,4 @@
 export interface ButtonProps {
     type: string;
-    value: boolean;
+    value: boolean | null;
 }
