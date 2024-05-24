@@ -95,21 +95,49 @@ function App() {
     setModalOpen(true);
   }
  
-  const district: {[key: string]: { x: number, y: number }} = {
-    'A': { x: 302, y: 152 },
-    'B': { x: 342, y: 152 },
-    'C': { x: 382, y: 152 },
-    'D': { x: 422, y: 152 },
-    'E': { x: 462, y: 152 },
-    'F': { x: 502, y: 152 },
-    'G': { x: 542, y: 152 },
-    'H': { x: 582, y: 152 },
-    'I': { x: 622, y: 152 },
-    'J': { x: 662, y: 152 },
+  const district1: {[key: string]: { x1: number, y1: number }} = {
+    'A': { x1: 302, y1: 152 },
+    'B': { x1: 342, y1: 152 },
+    'C': { x1: 382, y1: 152 },
+    'D': { x1: 422, y1: 152 },
+    'E': { x1: 462, y1: 152 },
+    'F': { x1: 502, y1: 152 },
+    'G': { x1: 542, y1: 152 },
+    'H': { x1: 582, y1: 152 },
+    'I': { x1: 622, y1: 152 },
+    'J': { x1: 662, y1: 152 },
+    'None' : {x1: 999, y1: 999},
   };
   
-  //const { x1, y1 } = district[workers[0]? workers[0][2].district: 'J'];
+  const district2: {[key: string]: { x2: number, y2: number }} = {
+    'A': { x2: 302, y2: 192 },
+    'B': { x2: 342, y2: 192 },
+    'C': { x2: 382, y2: 192 },
+    'D': { x2: 422, y2: 192 },
+    'E': { x2: 462, y2: 192 },
+    'F': { x2: 502, y2: 192 },
+    'G': { x2: 542, y2: 192 },
+    'H': { x2: 582, y2: 192 },
+    'I': { x2: 622, y2: 192 },
+    'J': { x2: 662, y2: 192 },
+    'None' : {x2: 999, y2: 999},
+  };        
 
+  let x1 = 999, y1 = 999, x2 = 999, y2 = 999;
+
+
+  if (Array.isArray(workers[0])) {
+    const districtKey = workers[0][2] && workers[0][2].district ? workers[0][2].district : 'None';
+    if (district1[districtKey]) { // districtKey가 district 객체의 유효한 키인지 추가로 확인
+        ({ x1, y1 } = district1[districtKey]);
+   }
+  }
+  if (Array.isArray(workers[1])) {
+    const districtKey = workers[1][2] && workers[1][2].district ? workers[1][2].district : 'None';
+    if (district1[districtKey]) { // districtKey가 district 객체의 유효한 키인지 추가로 확인
+        ({ x2, y2 } = district2[districtKey]);
+    }
+  }
   return (
     <>
     <S.RowWrapper>
@@ -138,10 +166,10 @@ function App() {
                         <S.WorkerInfo>{worker[1].birth || ''}</S.WorkerInfo>
                         <S.WorkerInfo>{worker[1].pn || ''}</S.WorkerInfo>
                         <S.WorkerInfo>
-                          <Button type="ring" value={worker[4].isSafe || null} ></Button>
+                          <Button type="ring" value={worker[4].isSafe} ></Button>
                         </S.WorkerInfo>
                         <S.WorkerInfo>
-                          <Button type="fall" value={worker[3].isFalling || null}></Button>
+                          <Button type="fall" value={worker[3].isFalling}></Button>
                         </S.WorkerInfo>
                       </React.Fragment>
                     </S.WorkerInfoWrapper>
@@ -172,8 +200,8 @@ function App() {
           <S.RowWrapper>
             <S.FloorPlanWrapper>
             <S.FloorPlan>
-                {/* <S.Point x={302} y={152}/> */}
-                {/* <S.Point x={x} y={y} /> */}
+                <S.Point x={x1} y={y1}/>
+                <S.Point x={x2} y={y2}/>
                 {/* {(workers && workers[3].isFalling) ? (
                   <>
                     <Modal isOpened={isModalOpen} onClose={handleCloseModal} content={`${worker1[2].district}구역에서 낙상 사고가 감지되었습니다.`}></Modal>
@@ -189,8 +217,8 @@ function App() {
               <S.StatusWrapper>
                   Device
                   <S.RowWrapper>
-                    <Box index={1} status={true} />
-                    <Box index={2} status={false} />
+                    <Box index={1} status={workers[0] ? true: false} />
+                    <Box index={2} status={workers[1] ? true: false} />
                   </S.RowWrapper>
               </S.StatusWrapper> 
             </S.RowWrapper>

@@ -9,22 +9,24 @@ const Button: React.FC<ButtonProps> = ({
         return (
             <S.GrayButton><S.GrayLight></S.GrayLight><S.BtnTitle>No value</S.BtnTitle></S.GrayButton>
         )
-    }
-    if (type === 'fall') {
-        return (
-            <>
-                {value ? <S.RedButton><S.RedLight></S.RedLight><S.BtnTitle>Risk</S.BtnTitle></S.RedButton> : <S.GreenButton><S.GreenLight></S.GreenLight><S.BtnTitle>Safe</S.BtnTitle></S.GreenButton>}
-            </>
-        );
-    } else if (type === 'ring') {
-        return (
-            <>
-                {value ? <S.GreenButton><S.GreenLight></S.GreenLight><S.BtnTitle>Safe</S.BtnTitle></S.GreenButton> : <S.RedButton><S.RedLight></S.RedLight><S.BtnTitle>Risk</S.BtnTitle></S.RedButton>}
-            </>
-        );
     } else {
-        return null;
+        if (type === 'fall') {
+            return (
+                <>
+                    {value ? <S.RedButton><S.RedLight></S.RedLight><S.BtnTitle>Risk</S.BtnTitle></S.RedButton> : <S.GreenButton><S.GreenLight></S.GreenLight><S.BtnTitle>Safe</S.BtnTitle></S.GreenButton>}
+                </>
+            );
+        } else if (type === 'ring') {
+            return (
+                <>
+                    {value ? <S.GreenButton><S.GreenLight></S.GreenLight><S.BtnTitle>Safe</S.BtnTitle></S.GreenButton> : <S.RedButton><S.RedLight></S.RedLight><S.BtnTitle>Risk</S.BtnTitle></S.RedButton>}
+                </>
+            );
+        } else {
+            return null;
+        }
     }
+    
 }
 
 export default Button;
