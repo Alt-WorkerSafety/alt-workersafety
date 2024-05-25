@@ -1,12 +1,5 @@
 import styled from 'styled-components';
 import ML from '../images/ML_district.png';
-import redpin from '../images/redpin.png';
-import risk_person from '../images/risk_person.png';
-
-interface PointProps {
-    x: number;
-    y: number;
-  }
 
 const RowWrapper = styled.div`
   display: flex;
@@ -27,12 +20,12 @@ const TitleText = styled.div`
 
 const SubTitleText = styled(TitleText)`
   font-size: 32px;
-  padding: 0 16px;
+  padding: 5px 16px;
 `;
 
 const FloorPlanWrapper = styled.div`
-  width: 70%;
-  height: 100%;
+  width: 90%;
+  height: 70%;
   margin: 0px 10px 0px 20px;
   border: 2px solid black;
 `;
@@ -85,25 +78,11 @@ const StatusWrapper = styled.div`
   flex-direction: column;
   font-size: 30px;
   font-weight: bold;
-  width: 30%;
+  width: 88%;
+  height: 60%;
   margin: 0px 20px 0px 10px;
   border: 2px solid black;
   padding: 20px;
 `;
 
-const Point = styled.div<PointProps>`
-  position: absolute;
-  width: 56px;
-  height: 56px;
-  top: ${props => props.y}px;
-  left: ${props => props.x}px;
-  background-image: url(${redpin});
-  background-size: contain;
-  background-repeat: no-repeat;
-`
-
-const FallingPoint = styled(Point)`
-  background-image: url(${risk_person});
-`
-
-export default {RowWrapper, ColumnWrapper, TitleText, SubTitleText, FloorPlanWrapper, FloorPlan, ListWrapper, WorkerList, WorkerInfo, WorkerInfoTitle, WorkerInfoWrapper, StatusWrapper, Point, FallingPoint}
+export default {RowWrapper, ColumnWrapper, TitleText, SubTitleText, FloorPlanWrapper, FloorPlan, ListWrapper, WorkerList, WorkerInfo, WorkerInfoTitle, WorkerInfoWrapper, StatusWrapper}

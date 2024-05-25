@@ -3,6 +3,7 @@ import Header from './components/Header';
 import Modal from './components/Modal';
 import Button from './components/Button';
 import Box from './components/Box';
+import Point from './components/Point';
 //import { getWorkerDetails } from './api/getWorkerDetails';
 import { getWorkers } from './api/getWorkers';
 import S from './styles/AppStyles';
@@ -20,24 +21,24 @@ function App() {
 
   const [workers, setWorkers] = useState<Workers[][]>([]);
 
-  useEffect(() => {
-      fetchWorkers();
+  // useEffect(() => {
+  //     fetchWorkers();
 
-      const interval = setInterval(fetchWorkers, 3000);  // 3초마다 업데이트
+  //     const interval = setInterval(fetchWorkers, 3000);  // 3초마다 업데이트
 
-      return () => clearInterval(interval);
-  }, []);
+  //     return () => clearInterval(interval);
+  // }, []);
 
-  const fetchWorkers = () => {
-    getWorkers()
-      .then(response => {
-        if (response.status >= 200 && response.status < 300) {
-          setWorkers(response.data);
-        } else {
-          throw new Error('Workers: Network response was not ok!');
-        }
-      });
-  }
+  // const fetchWorkers = () => {
+  //   getWorkers()
+  //     .then(response => {
+  //       if (response.status >= 200 && response.status < 300) {
+  //         setWorkers(response.data);
+  //       } else {
+  //         throw new Error('Workers: Network response was not ok!');
+  //       }
+  //     });
+  // }
 
   // 작업자 1, 2 분리할 경우 (현재 사용 X)
   // interface Worker {
@@ -127,7 +128,7 @@ function App() {
     'None' : {x2: 999, y2: 999},
   };        
 
-  let x1 = 999, y1 = 999, x2 = 999, y2 = 999;
+  let x1 = -999, y1 = 0, x2 = -999, y2 = 0;
 
 
   if (Array.isArray(workers[0])) {
@@ -168,9 +169,9 @@ function App() {
                     <S.WorkerInfoWrapper>
                     <React.Fragment key={index + 1}>
                         <S.WorkerInfo>{index + 1}</S.WorkerInfo> 
-                        <S.WorkerInfo>{worker[1].name || ''}</S.WorkerInfo> 
-                        <S.WorkerInfo>{worker[1].birth || ''}</S.WorkerInfo>
-                        <S.WorkerInfo>{worker[1].pn || ''}</S.WorkerInfo>
+                        <S.WorkerInfo>{worker[1].name}</S.WorkerInfo> 
+                        <S.WorkerInfo>{worker[1].birth}</S.WorkerInfo>
+                        <S.WorkerInfo>{worker[1].pn}</S.WorkerInfo>
                         <S.WorkerInfo>
                           <Button type="ring" value={worker[4].isSafe} ></Button>
                         </S.WorkerInfo>
@@ -208,8 +209,10 @@ function App() {
           <S.SubTitleText>구역 정보</S.SubTitleText>
             <S.FloorPlanWrapper>
             <S.FloorPlan>
-                <S.Point x={x1} y={y1}/>
-                <S.Point x={x2} y={y2}/>
+                {/* 작업자 구역 표시 */}
+                {workers[0] ? <Point x={x1} y={y1} index={1} content={workers[0][1] ? workers[0][1].name : ''} /> : <></>}
+                {workers[1] ? <Point x={x1} y={y1} index={2} content={workers[1][1] ? workers[1][1].name : ''} /> : <></>}
+                
                 {/* 작업자 추가 및 수정창 */}
                 <Modal type='add' isOpened={isModalOpen} onClose={handleCloseModal} content={`작업자 정보 수정`}></Modal>
                 {/* 낙상 사고 발생 시 알림창 */}
@@ -226,13 +229,16 @@ function App() {
               </S.FloorPlan>
               </S.FloorPlanWrapper>
               </S.ColumnWrapper>
-              <S.StatusWrapper>
-                  Device
-                  <S.RowWrapper>
-                    <Box index={1} status={workers[0] ? true: false} />
-                    <Box index={2} status={workers[1] ? true: false} />
-                  </S.RowWrapper>
-              </S.StatusWrapper> 
+              <S.ColumnWrapper>
+                <S.SubTitleText>작업자 정보</S.SubTitleText>
+                <S.StatusWrapper>
+                    Device
+                    <S.RowWrapper>
+                      <Box index={1} status={workers[0] ? true: false} />
+                      <Box index={2} status={workers[1] ? true: false} />
+                    </S.RowWrapper>
+                </S.StatusWrapper>
+              </S.ColumnWrapper> 
             </S.RowWrapper>
           </S.ColumnWrapper>   
       </S.RowWrapper>
