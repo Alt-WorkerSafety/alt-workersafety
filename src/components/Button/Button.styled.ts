@@ -21,6 +21,31 @@ const GrayButton = styled(RedButton)`
   background-color: gray;
 `;
 
+const AddButton = styled(RedButton)`
+  width: 220px;
+  height: 20px;
+  padding: 10px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  background-color: black;
+  border-radius: 8px;
+  color: white;
+  margin-right: 20px;
+  cursor: pointer;
+  border: 3px solid black;
+  &:hover {
+    background-color: white;
+    color: black;
+  }
+`;
+
+const AddIcon = styled.img`
+  width: 24px;
+  height: 24px;
+  margin: 8px;
+`;
+
 const RedLight = styled.div`
   background-color: #FE2E2E;
   width: 10px;
@@ -41,4 +66,4 @@ const BtnTitle = styled.div`
   margin: auto;
 `;
 
-export default {RedButton, GreenButton, GrayButton, RedLight, GreenLight, GrayLight, BtnTitle}
+export default {RedButton, GreenButton, GrayButton, AddButton, AddIcon, RedLight, GreenLight, GrayLight, BtnTitle}

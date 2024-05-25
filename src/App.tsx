@@ -91,8 +91,12 @@ function App() {
   const [isModalOpen, setModalOpen] = useState(false);
   const [buttonStatus, setButtonStatus] = useState(false);
 
-  const handleCloseModal = () => {
+  const handleOpenModal = () => {
     setModalOpen(true);
+  }
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
   }
  
   const district1: {[key: string]: { x1: number, y1: number }} = {
@@ -144,6 +148,8 @@ function App() {
       <Header />
         <S.ColumnWrapper>
           <S.TitleText>Dashboard</S.TitleText>
+          <S.SubTitleText>작업자 정보</S.SubTitleText>
+          <Button type='add' value={true} onclick={handleOpenModal}></Button>
           <S.ListWrapper>
             <S.WorkerList>
               <S.WorkerInfoTitle>
@@ -198,22 +204,28 @@ function App() {
             </S.WorkerList>
           </S.ListWrapper>
           <S.RowWrapper>
+          <S.ColumnWrapper>
+          <S.SubTitleText>구역 정보</S.SubTitleText>
             <S.FloorPlanWrapper>
             <S.FloorPlan>
                 <S.Point x={x1} y={y1}/>
                 <S.Point x={x2} y={y2}/>
-                {/* {(workers && workers[3].isFalling) ? (
+                {/* 작업자 추가 및 수정창 */}
+                <Modal type='add' isOpened={isModalOpen} onClose={handleCloseModal} content={`작업자 정보 수정`}></Modal>
+                {/* 낙상 사고 발생 시 알림창 */}
+                {(workers[0] && workers[0][3].isFalling) ? (
                   <>
-                    <Modal isOpened={isModalOpen} onClose={handleCloseModal} content={`${worker1[2].district}구역에서 낙상 사고가 감지되었습니다.`}></Modal>
+                    <Modal type='alarm' isOpened={isModalOpen} onClose={handleCloseModal} content={`${workers[0][2].district}구역에서 낙상 사고가 감지되었습니다.`}></Modal>
                     
                   </>
-                ) : (workers && workers[3].isFalling) ? (
+                ) : (workers[1] && workers[1][3].isFalling) ? (
                   <>
-                    <Modal isOpened={isModalOpen} onClose={handleCloseModal} content={`${worker2[2].district}구역에서 낙상 사고가 감지되었습니다.`}></Modal>
+                    <Modal type='alarm' isOpened={isModalOpen} onClose={handleCloseModal} content={`${workers[1][2].district}구역에서 낙상 사고가 감지되었습니다.`}></Modal>
                   </>
-                ): <></> } */}
+                ): <></> }
               </S.FloorPlan>
               </S.FloorPlanWrapper>
+              </S.ColumnWrapper>
               <S.StatusWrapper>
                   Device
                   <S.RowWrapper>

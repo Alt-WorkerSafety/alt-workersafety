@@ -25,12 +25,16 @@ const TitleText = styled.div`
   padding: 16px;
 `;
 
+const SubTitleText = styled(TitleText)`
+  font-size: 32px;
+  padding: 0 16px;
+`;
+
 const FloorPlanWrapper = styled.div`
   width: 70%;
   height: 100%;
   margin: 0px 10px 0px 20px;
   border: 2px solid black;
-  border-radius: 10px;
 `;
 
 const FloorPlan = styled.div`
@@ -65,13 +69,15 @@ const WorkerInfo = styled.div`
 
 const WorkerInfoTitle = styled.div`
   display: table-row;
-  background-color: #E6E6E6;
+  background-color: black;
   font-weight: bold;
+  color: white;
 `;
 
 const WorkerInfoWrapper = styled(WorkerInfoTitle)`
   background-color: white;
   font-weight: normal;
+  color: black;
 `
 
 const StatusWrapper = styled.div`
@@ -82,7 +88,6 @@ const StatusWrapper = styled.div`
   width: 30%;
   margin: 0px 20px 0px 10px;
   border: 2px solid black;
-  border-radius: 10px;
   padding: 20px;
 `;
 
@@ -96,8 +101,9 @@ const Point = styled.div<PointProps>`
   background-size: contain;
   background-repeat: no-repeat;
 `
+
 const FallingPoint = styled(Point)`
   background-image: url(${risk_person});
 `
 
-export default {RowWrapper, ColumnWrapper, TitleText, FloorPlanWrapper, FloorPlan, ListWrapper, WorkerList, WorkerInfo, WorkerInfoTitle, WorkerInfoWrapper, StatusWrapper, Point, FallingPoint}
+export default {RowWrapper, ColumnWrapper, TitleText, SubTitleText, FloorPlanWrapper, FloorPlan, ListWrapper, WorkerList, WorkerInfo, WorkerInfoTitle, WorkerInfoWrapper, StatusWrapper, Point, FallingPoint}
