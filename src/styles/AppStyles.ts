@@ -85,4 +85,21 @@ const StatusWrapper = styled.div`
   padding: 20px;
 `;
 
-export default {RowWrapper, ColumnWrapper, TitleText, SubTitleText, FloorPlanWrapper, FloorPlan, ListWrapper, WorkerList, WorkerInfo, WorkerInfoTitle, WorkerInfoWrapper, StatusWrapper}
+interface DeleteProps {
+  active: boolean;
+}
+
+const DeleteIcon = styled.img<DeleteProps>`
+  width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  cursor: ${(props) => (props.active ? "pointer" : "default")}; 
+  transition: transform 0.3s ease;
+  pointer-events: ${(props) => (props.active ? "auto" : "none")};
+  &:hover {
+    transform: ${(props) => (props.active ? "scale(1.2)" : "none")};
+  }
+`;
+
+export default {RowWrapper, ColumnWrapper, TitleText, SubTitleText, FloorPlanWrapper, FloorPlan, ListWrapper, WorkerList, WorkerInfo, WorkerInfoTitle, WorkerInfoWrapper, StatusWrapper, DeleteIcon}

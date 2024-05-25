@@ -6,7 +6,9 @@ import Box from './components/Box';
 import Point from './components/Point';
 //import { getWorkerDetails } from './api/getWorkerDetails';
 import { getWorkers } from './api/getWorkers';
+import { deleteWorker } from './api/deleteWorkers';
 import S from './styles/AppStyles';
+import deleteicon from './images/delete-icon.png';
 
 function App() {
   interface Workers {
@@ -21,24 +23,24 @@ function App() {
 
   const [workers, setWorkers] = useState<Workers[][]>([]);
 
-  // useEffect(() => {
-  //     fetchWorkers();
+  useEffect(() => {
+      fetchWorkers();
 
-  //     const interval = setInterval(fetchWorkers, 3000);  // 3초마다 업데이트
+      const interval = setInterval(fetchWorkers, 3000);  // 3초마다 업데이트
 
-  //     return () => clearInterval(interval);
-  // }, []);
+      return () => clearInterval(interval);
+  }, []);
 
-  // const fetchWorkers = () => {
-  //   getWorkers()
-  //     .then(response => {
-  //       if (response.status >= 200 && response.status < 300) {
-  //         setWorkers(response.data);
-  //       } else {
-  //         throw new Error('Workers: Network response was not ok!');
-  //       }
-  //     });
-  // }
+  const fetchWorkers = () => {
+    getWorkers()
+      .then(response => {
+        if (response.status >= 200 && response.status < 300) {
+          setWorkers(response.data);
+        } else {
+          throw new Error('Workers: Network response was not ok!');
+        }
+      });
+  }
 
   // 작업자 1, 2 분리할 경우 (현재 사용 X)
   // interface Worker {
@@ -88,6 +90,21 @@ function App() {
       console.log('No workers available.');
   }
   
+
+  const handleDelete = (workerId: number) => {
+    deleteWorker(workerId)
+      .then(response => {
+        if (response.status >= 200 && response.status < 300) {
+          // 성공적으로 삭제되었다면, 클라이언트 상태도 업데이트
+          setWorkers(prevWorkers => prevWorkers.filter(worker => workers[workerId][0].id !== workerId));
+        } else {
+          throw new Error('Delete: Network response was not ok!');
+        }
+      })
+      .catch(error => {
+        console.error("There was an error!", error);
+      });
+  };  
 
   const [isModalOpen, setModalOpen] = useState(false);
   const [buttonStatus, setButtonStatus] = useState(false);
@@ -160,6 +177,9 @@ function App() {
                 <S.WorkerInfo>전화번호</S.WorkerInfo>
                 <S.WorkerInfo>안전고리</S.WorkerInfo>
                 <S.WorkerInfo>낙상여부</S.WorkerInfo>
+                <S.WorkerInfo>
+                  <S.DeleteIcon active={false} src={deleteicon} />
+                </S.WorkerInfo>
               </S.WorkerInfoTitle>
                
               {workers.length > 0 ? (
@@ -177,6 +197,9 @@ function App() {
                         </S.WorkerInfo>
                         <S.WorkerInfo>
                           <Button type="fall" value={worker[3].isFalling}></Button>
+                        </S.WorkerInfo>
+                        <S.WorkerInfo>
+                          <S.DeleteIcon active={true} src={deleteicon} onClick={() => handleDelete(index)} />
                         </S.WorkerInfo>
                       </React.Fragment>
                     </S.WorkerInfoWrapper>
@@ -197,6 +220,9 @@ function App() {
                     <S.WorkerInfo>
                       <Button type="fall" value={null}></Button>
                     </S.WorkerInfo>
+                    <S.WorkerInfo>
+                          <S.DeleteIcon active={false} src={deleteicon} onClick={() => handleDelete(index)} />
+                        </S.WorkerInfo>
                   </React.Fragment>
                   </S.WorkerInfoWrapper>
                 ))
