@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import S from './Modal.styled';
 import type { ModalProps } from './types';
 import risk from '../../images/risk.png';
+import { getWorkers } from '../../api/getWorkers';
+import { postWorkers } from '../../api/postWorkers';
 
 interface WorkerInfo {
   name: string;
@@ -23,21 +25,22 @@ const Modal: React.FC<ModalProps> = ({
   useEffect(() => {
     const fetchWorkers = async () => {
       try {
-        const response = await fetch('/api/workers');
-        if (!response.ok) {
-          throw new Error('데이터를 불러오는 데 실패했습니다.');
+        const response = await getWorkers();
+        if (response && response.data) {
+          const data: WorkerInfo[] = await response.data();
+          setWorkers(data.length > 0 ? data : [
+            { name: '', birth: '', pn: '' },
+            { name: '', birth: '', pn: '' },
+          ]);
         }
-        const data: WorkerInfo[] = await response.json();
-        setWorkers(data.length > 0 ? data : [
-          { name: '', birth: '', pn: '' },
-          { name: '', birth: '', pn: '' },
-        ]);
       } catch (error) {
         console.error(error);
       }
     };
     fetchWorkers();
   }, []);
+
+  console.log('수정창에서 가져오는 ', workers);
 
   const handleInputChange = (index: number, field: keyof WorkerInfo, value: string) => {
     const newWorkers = [...workers];
@@ -47,20 +50,8 @@ const Modal: React.FC<ModalProps> = ({
 
   const sendData = async () => {
     try {
-      const response = await fetch('/api/workers', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(workers),
-      });
-
-      if (!response.ok) {
-        throw new Error('Something went wrong');
-      }
-
-      const responseData = await response.json();
-      console.log('Success: ', responseData);
+      await postWorkers(workers);
+      console.log('확인 후 새롭게 수정된 ', workers);
       onClose();
     } catch (error) {
       console.error(error);
