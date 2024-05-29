@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Modal from './components/Modal';
 import Button from './components/Button';
-import Box from './components/Box';
 import Point from './components/Point';
 //import { getWorkerDetails } from './api/getWorkerDetails';
 import { getWorkers } from './api/getWorkers';
@@ -32,8 +31,7 @@ function App() {
   }, []);
 
   const fetchWorkers = () => {
-    getWorkers()
-      .then(response => {
+    getWorkers()?.then(response => {
         if (response.status >= 200 && response.status < 300) {
           setWorkers(response.data);
         } else {
@@ -69,6 +67,7 @@ function App() {
   //       getWorkerDetails(1),
   //       getWorkerDetails(2)
   //   ]).then((responses) => {
+
   //     const statusCodes = responses.map(response => response.status);
 
   //     if (statusCodes.every(code => code >= 200 && code < 300)) {
@@ -81,12 +80,17 @@ function App() {
   //     });
   // };
 
-  // 임시
+ // 임시
   console.log('Workers : ', workers);
   if (Array.isArray(workers[0])) {
-      console.log('worker1 raspi: ', workers[0][1].birth);
-      console.log('worker1 raspi: ', workers[0][1].name);
-  } else {
+      console.log('worker1 raspi: ', workers[0][2].district);
+      console.log('worker1 raspi: ', workers[0][3].isFalling);
+      console.log('worker1 raspi: ', workers[0][4].isSafe);
+    } else if (Array.isArray(workers[1])) {
+        console.log('worker1 raspi: ', workers[1][2].district);
+        console.log('worker1 raspi: ', workers[1][3].isFalling);
+        console.log('worker1 raspi: ', workers[1][4].isSafe);
+    } else {
       console.log('No workers available.');
   }
   
@@ -95,7 +99,6 @@ function App() {
     deleteWorker(workerId)
       .then(response => {
         if (response.status >= 200 && response.status < 300) {
-          // 성공적으로 삭제되었다면, 클라이언트 상태도 업데이트
           setWorkers(prevWorkers => prevWorkers.filter(worker => workers[workerId][0].id !== workerId));
         } else {
           throw new Error('Delete: Network response was not ok!');
@@ -118,30 +121,30 @@ function App() {
   }
  
   const district1: {[key: string]: { x1: number, y1: number }} = {
-    'A': { x1: 302, y1: 152 },
-    'B': { x1: 342, y1: 152 },
-    'C': { x1: 382, y1: 152 },
-    'D': { x1: 422, y1: 152 },
-    'E': { x1: 462, y1: 152 },
-    'F': { x1: 502, y1: 152 },
-    'G': { x1: 542, y1: 152 },
-    'H': { x1: 582, y1: 152 },
-    'I': { x1: 622, y1: 152 },
-    'J': { x1: 662, y1: 152 },
+    'A': { x1: 152, y1: 152 },
+    'B': { x1: 192, y1: 152 },
+    'C': { x1: 232, y1: 152 },
+    'D': { x1: 272, y1: 152 },
+    'E': { x1: 312, y1: 152 },
+    'F': { x1: 352, y1: 152 },
+    'G': { x1: 392, y1: 152 },
+    'H': { x1: 432, y1: 152 },
+    'I': { x1: 472, y1: 152 },
+    'J': { x1: 512, y1: 152 },
     'None' : {x1: 999, y1: 999},
   };
   
   const district2: {[key: string]: { x2: number, y2: number }} = {
-    'A': { x2: 302, y2: 192 },
-    'B': { x2: 342, y2: 192 },
-    'C': { x2: 382, y2: 192 },
-    'D': { x2: 422, y2: 192 },
-    'E': { x2: 462, y2: 192 },
-    'F': { x2: 502, y2: 192 },
-    'G': { x2: 542, y2: 192 },
-    'H': { x2: 582, y2: 192 },
-    'I': { x2: 622, y2: 192 },
-    'J': { x2: 662, y2: 192 },
+    'A': { x2: 152, y2: 192 },
+    'B': { x2: 192, y2: 192 },
+    'C': { x2: 232, y2: 192 },
+    'D': { x2: 272, y2: 192 },
+    'E': { x2: 312, y2: 192 },
+    'F': { x2: 352, y2: 192 },
+    'G': { x2: 392, y2: 192 },
+    'H': { x2: 432, y2: 192 },
+    'I': { x2: 472, y2: 192 },
+    'J': { x2: 512, y2: 192 },
     'None' : {x2: 999, y2: 999},
   };        
 
@@ -166,8 +169,10 @@ function App() {
       <Header />
         <S.ColumnWrapper>
           <S.TitleText>Dashboard</S.TitleText>
-          <S.SubTitleText>작업자 정보</S.SubTitleText>
-          <Button type='add' value={true} onclick={handleOpenModal}></Button>
+          <S.RowWrapper>
+            <S.SubTitleText>작업자 정보</S.SubTitleText>
+            <Button type='add' value={true} onclick={handleOpenModal}></Button>
+          </S.RowWrapper>
           <S.ListWrapper>
             <S.WorkerList>
               <S.WorkerInfoTitle>
@@ -234,35 +239,53 @@ function App() {
           <S.ColumnWrapper>
           <S.SubTitleText>구역 정보</S.SubTitleText>
             <S.FloorPlanWrapper>
-            <S.FloorPlan>
-                {/* 작업자 구역 표시 */}
-                {workers[0] ? <Point x={x1} y={y1} index={1} content={workers[0][1] ? workers[0][1].name : ''} /> : <></>}
-                {workers[1] ? <Point x={x1} y={y1} index={2} content={workers[1][1] ? workers[1][1].name : ''} /> : <></>}
-                
-                {/* 작업자 추가 및 수정창 */}
-                <Modal type='add' isOpened={isModalOpen} onClose={handleCloseModal} content={`작업자 정보 수정`}></Modal>
-                {/* 낙상 사고 발생 시 알림창 */}
-                {(workers[0] && workers[0][3].isFalling) ? (
-                  <>
-                    <Modal type='alarm' isOpened={isModalOpen} onClose={handleCloseModal} content={`${workers[0][2].district}구역에서 낙상 사고가 감지되었습니다.`}></Modal>
-                    
-                  </>
-                ) : (workers[1] && workers[1][3].isFalling) ? (
-                  <>
-                    <Modal type='alarm' isOpened={isModalOpen} onClose={handleCloseModal} content={`${workers[1][2].district}구역에서 낙상 사고가 감지되었습니다.`}></Modal>
-                  </>
-                ): <></> }
-              </S.FloorPlan>
+              <S.FloorPlan>
+                  {/* 작업자 구역 표시 */}
+                  {/* 예시 테스트*/}
+                  {/* <Point x={248} y={155} index={1} content={'최현진'} />
+                  <Point x={284} y={220} index={2} content={'김나현'} />
+                  <Point x={316} y={220} index={1} content={'김나현'} />
+                  <Point x={348} y={212} index={2} content={'김나현'} /> */}
+                  {/* 실제 */}
+                  {workers[0] ? <Point x={x1} y={y1} index={1} content={workers[0][1] ? workers[0][1].name : ''} /> : <></>}
+                  {workers[1] ? <Point x={x1} y={y1} index={2} content={workers[1][1] ? workers[1][1].name : ''} /> : <></>}
+                  
+                  {/* 작업자 추가 및 수정창 */}
+                  <Modal type='add' isOpened={isModalOpen} onClose={handleCloseModal} content={`작업자 정보 수정`}></Modal>
+                  {/* 낙상 사고 발생 시 알림창 */}
+                  {(workers[0] && workers[0][3].isFalling) ? (
+                    <>
+                      <Modal type='alarm' isOpened={isModalOpen} onClose={handleCloseModal} content={`${workers[0][2].district}구역에서 낙상 사고가 감지되었습니다.`}></Modal>
+                      
+                    </>
+                  ) : (workers[1] && workers[1][3].isFalling) ? (
+                    <>
+                      <Modal type='alarm' isOpened={isModalOpen} onClose={handleCloseModal} content={`${workers[1][2].district}구역에서 낙상 사고가 감지되었습니다.`}></Modal>
+                    </>
+                  ): <></> }
+                </S.FloorPlan>
               </S.FloorPlanWrapper>
               </S.ColumnWrapper>
               <S.ColumnWrapper>
-                <S.SubTitleText>작업자 정보</S.SubTitleText>
+                <S.SubTitleText>낙상 사고 현황</S.SubTitleText>
                 <S.StatusWrapper>
-                    Device
-                    <S.RowWrapper>
-                      <Box index={1} status={workers[0] ? true: false} />
-                      <Box index={2} status={workers[1] ? true: false} />
-                    </S.RowWrapper>
+                  <S.ListWrapper>
+                    <S.WorkerList>
+                      <S.WorkerInfoTitle>
+                        <S.WorkerInfo>발생 시각</S.WorkerInfo> 
+                        <S.WorkerInfo>이름</S.WorkerInfo> 
+                        <S.WorkerInfo>구역</S.WorkerInfo>
+                        <S.WorkerInfo>조치</S.WorkerInfo>
+                      </S.WorkerInfoTitle>
+                      <S.WorkerInfoWrapper>
+                        <S.WorkerInfo>발생 시각</S.WorkerInfo> 
+                        <S.WorkerInfo>이름</S.WorkerInfo> 
+                        <S.WorkerInfo>구역</S.WorkerInfo>
+                        <S.WorkerInfo>조치</S.WorkerInfo>
+                      </S.WorkerInfoWrapper>
+                     
+                    </S.WorkerList>
+                  </S.ListWrapper>
                 </S.StatusWrapper>
               </S.ColumnWrapper> 
             </S.RowWrapper>

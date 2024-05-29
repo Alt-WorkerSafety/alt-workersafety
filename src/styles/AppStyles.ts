@@ -19,13 +19,13 @@ const TitleText = styled.div`
 `;
 
 const SubTitleText = styled(TitleText)`
-  font-size: 32px;
+  font-size: 28px;
   padding: 5px 16px;
 `;
 
 const FloorPlanWrapper = styled.div`
-  width: 90%;
-  height: 70%;
+  width: 630px;
+  height: 300px;
   margin: 0px 10px 0px 20px;
   border: 2px solid black;
 `;
@@ -37,7 +37,6 @@ const FloorPlan = styled.div`
   background-size: contain;
   background-repeat: no-repeat;
   border-radius: 10px;
-  
 `;
 
 const ListWrapper = styled.div`
@@ -47,7 +46,7 @@ const ListWrapper = styled.div`
   display: flex;
   flex-direction: column;
   border: 1px solid black;
-  margin: 20px;
+  margin: 10px;
 `;
 
 const WorkerList = styled.div`
@@ -74,15 +73,13 @@ const WorkerInfoWrapper = styled(WorkerInfoTitle)`
 `
 
 const StatusWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  font-size: 30px;
   font-weight: bold;
-  width: 88%;
-  height: 60%;
+  width: 492px;
+  height: 260px;
   margin: 0px 20px 0px 10px;
   border: 2px solid black;
   padding: 20px;
+  overflow-y: auto;
 `;
 
 interface DeleteProps {

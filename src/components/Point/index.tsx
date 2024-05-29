@@ -11,15 +11,19 @@ const Point : React.FC<PointProps> = ({
     if (index === 1) {
         return (
             <>
-              <S.PointTitle>{content}</S.PointTitle>
-              <S.Point1 x={x} y={y}></S.Point1> 
+                <S.PointContainer x={x} y={y}>
+                    <S.PointTitle>{content}</S.PointTitle>
+                    <S.Point1></S.Point1> 
+                </S.PointContainer>
             </>
         )
     } else if (index === 2) {
         return (
             <>
-                <S.PointTitle>{content}</S.PointTitle>
-                <S.Point2 x={x} y={y}></S.Point2> 
+                <S.PointContainer x={x} y={y}>
+                    <S.PointTitle>{content}</S.PointTitle>
+                    <S.Point2></S.Point2> 
+                </S.PointContainer>
             </>
         )
     } else {
