@@ -5,6 +5,7 @@ import Button from './components/Button';
 import Point from './components/Point';
 //import { getWorkerDetails } from './api/getWorkerDetails';
 import { getWorkers } from './api/getWorkers';
+import { getWorkersLog } from './api/getWorkersLog';
 import { deleteWorker } from './api/deleteWorkers';
 import S from './styles/AppStyles';
 import deleteicon from './images/delete-icon.png';
@@ -20,16 +21,24 @@ function App() {
     isSafe: boolean | null;
   }
 
+  interface Workerslog {
+    timestamp: Date | null;
+    name: string | null;
+    district: string | null;
+  }
+
   const [workers, setWorkers] = useState<Workers[][]>([]);
+  const [workerslog, setWorkerslog] = useState<Workerslog[]>([]);
 
   useEffect(() => {
       fetchWorkers();
 
-      const interval = setInterval(fetchWorkers, 3000);  // 3초마다 업데이트
+      const interval = setInterval(fetchWorkers, 2000);  // 2초마다 업데이트
 
       return () => clearInterval(interval);
   }, []);
 
+  // 작업자 정보 가져오기
   const fetchWorkers = () => {
     getWorkers()?.then(response => {
         if (response.status >= 200 && response.status < 300) {
@@ -39,6 +48,26 @@ function App() {
         }
       });
   }
+
+  // 낙상 사고 기록
+  useEffect(() => {
+    fetchWorkerslog();
+
+    const interval = setInterval(fetchWorkerslog, 2000);  // 3초마다 업데이트
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const fetchWorkerslog = () => {
+    getWorkersLog()?.then(response => {
+        if (response.status >= 200 && response.status < 300) {
+          setWorkerslog(response.data);
+        } else {
+          throw new Error('Workers: Network response was not ok!');
+        }
+      });
+  }
+
 
   // 작업자 1, 2 분리할 경우 (현재 사용 X)
   // interface Worker {
@@ -110,7 +139,10 @@ function App() {
   };  
 
   const [isModalOpen, setModalOpen] = useState(false);
+  const [lastModalOpenTime, setLastModalOpenTime] = useState<Date | null>(null);
+  const [modalContent, setModalContent] = useState('');
   const [buttonStatus, setButtonStatus] = useState(false);
+
 
   const handleOpenModal = () => {
     setModalOpen(true);
@@ -119,34 +151,61 @@ function App() {
   const handleCloseModal = () => {
     setModalOpen(false);
   }
+
+  const handleTimeCloseModal = () => {
+    setModalOpen(false);
+    setLastModalOpenTime(new Date()); // 모달을 닫을 때 현재 시간을 저장
+  }
+
+  useEffect(() => {
+    const checkFallingWorker = () => {
+      const now = new Date();
+      // 마지막 모달창이 열린 시간으로부터 1분 이내인 경우 업데이트를 하지 않음
+      if (lastModalOpenTime && (now.getTime() - lastModalOpenTime.getTime()) < 60000) {
+        return;
+      }
+
+      // 낙상 사고 발생 여부 확인
+      for (let i = 0; i < workers.length; i++) {
+        if (workers[i][3].isFalling) {
+          setModalContent(`${workers[i][2].district}구역에서 낙상 사고가 감지되었습니다.`);
+          setModalOpen(true); // 낙상 사고 모달창 열기
+          break;
+        }
+      }
+    };
+
+    checkFallingWorker();
+  }, [workers, lastModalOpenTime]); // workers 배열이나 lastModalOpenTime이 변경될 때마다 확인
  
   const district1: {[key: string]: { x1: number, y1: number }} = {
-    'A': { x1: 152, y1: 152 },
-    'B': { x1: 192, y1: 152 },
-    'C': { x1: 232, y1: 152 },
-    'D': { x1: 272, y1: 152 },
-    'E': { x1: 312, y1: 152 },
-    'F': { x1: 352, y1: 152 },
-    'G': { x1: 392, y1: 152 },
-    'H': { x1: 432, y1: 152 },
-    'I': { x1: 472, y1: 152 },
-    'J': { x1: 512, y1: 152 },
-    'None' : {x1: 999, y1: 999},
+    'A': { x1: 248, y1: 157 },
+    'B': { x1: 284, y1: 157 },
+    'C': { x1: 315, y1: 157 },
+    'D': { x1: 352, y1: 157 },
+    'E': { x1: 385, y1: 157 },
+    'F': { x1: 418, y1: 157 },
+    'G': { x1: 452, y1: 157 },
+    'H': { x1: 485, y1: 157 },
+    'I': { x1: 518, y1: 157 },
+    'J': { x1: 552, y1: 157 },
+    'None' : {x1: -999, y1: 0},
   };
   
   const district2: {[key: string]: { x2: number, y2: number }} = {
-    'A': { x2: 152, y2: 192 },
-    'B': { x2: 192, y2: 192 },
-    'C': { x2: 232, y2: 192 },
-    'D': { x2: 272, y2: 192 },
-    'E': { x2: 312, y2: 192 },
-    'F': { x2: 352, y2: 192 },
-    'G': { x2: 392, y2: 192 },
-    'H': { x2: 432, y2: 192 },
-    'I': { x2: 472, y2: 192 },
-    'J': { x2: 512, y2: 192 },
-    'None' : {x2: 999, y2: 999},
+    'A': { x2: 248, y2: 220 },
+    'B': { x2: 284, y2: 220 },
+    'C': { x2: 315, y2: 220 },
+    'D': { x2: 352, y2: 220 },
+    'E': { x2: 385, y2: 220 },
+    'F': { x2: 418, y2: 220 },
+    'G': { x2: 452, y2: 220 },
+    'H': { x2: 485, y2: 220 },
+    'I': { x2: 518, y2: 220 },
+    'J': { x2: 552, y2: 220 },
+    'None' : {x2: -999, y2: 0},
   };        
+       
 
   let x1 = -999, y1 = 0, x2 = -999, y2 = 0;
 
@@ -241,28 +300,20 @@ function App() {
             <S.FloorPlanWrapper>
               <S.FloorPlan>
                   {/* 작업자 구역 표시 */}
-                  {/* 예시 테스트*/}
-                  {/* <Point x={248} y={155} index={1} content={'최현진'} />
-                  <Point x={284} y={220} index={2} content={'김나현'} />
-                  <Point x={316} y={220} index={1} content={'김나현'} />
-                  <Point x={348} y={212} index={2} content={'김나현'} /> */}
-                  {/* 실제 */}
                   {workers[0] ? <Point x={x1} y={y1} index={1} content={workers[0][1] ? workers[0][1].name : ''} /> : <></>}
                   {workers[1] ? <Point x={x1} y={y1} index={2} content={workers[1][1] ? workers[1][1].name : ''} /> : <></>}
                   
                   {/* 작업자 추가 및 수정창 */}
                   <Modal type='add' isOpened={isModalOpen} onClose={handleCloseModal} content={`작업자 정보 수정`}></Modal>
                   {/* 낙상 사고 발생 시 알림창 */}
-                  {(workers[0] && workers[0][3].isFalling) ? (
-                    <>
-                      <Modal type='alarm' isOpened={isModalOpen} onClose={handleCloseModal} content={`${workers[0][2].district}구역에서 낙상 사고가 감지되었습니다.`}></Modal>
-                      
-                    </>
-                  ) : (workers[1] && workers[1][3].isFalling) ? (
-                    <>
-                      <Modal type='alarm' isOpened={isModalOpen} onClose={handleCloseModal} content={`${workers[1][2].district}구역에서 낙상 사고가 감지되었습니다.`}></Modal>
-                    </>
-                  ): <></> }
+                  {isModalOpen && (
+                    <Modal
+                      type='alarm'
+                      isOpened={isModalOpen}
+                      onClose={handleTimeCloseModal}
+                      content={modalContent}
+                    ></Modal>
+                  )}
                 </S.FloorPlan>
               </S.FloorPlanWrapper>
               </S.ColumnWrapper>
@@ -277,13 +328,22 @@ function App() {
                         <S.WorkerInfo>구역</S.WorkerInfo>
                         <S.WorkerInfo>조치</S.WorkerInfo>
                       </S.WorkerInfoTitle>
-                      <S.WorkerInfoWrapper>
-                        <S.WorkerInfo>발생 시각</S.WorkerInfo> 
-                        <S.WorkerInfo>이름</S.WorkerInfo> 
-                        <S.WorkerInfo>구역</S.WorkerInfo>
-                        <S.WorkerInfo>조치</S.WorkerInfo>
-                      </S.WorkerInfoWrapper>
-                     
+                      {workerslog.length > 0 ? (
+                        workerslog.map((workerlog, index) => {
+                          return (
+                            <S.WorkerInfoWrapper>
+                              <S.WorkerInfo>{workerlog.timestamp ? workerlog.timestamp.toLocaleString() : '날짜 없음'}</S.WorkerInfo> 
+                              <S.WorkerInfo>{workerlog.name}</S.WorkerInfo> 
+                              <S.WorkerInfo>{workerlog.district}</S.WorkerInfo>
+                              <S.WorkerInfo>
+                                <Button type='confirm' value={true}></Button>
+                              </S.WorkerInfo>
+                            </S.WorkerInfoWrapper>  
+                          )
+                          })
+                      ): (
+                        <></>
+                      )}
                     </S.WorkerList>
                   </S.ListWrapper>
                 </S.StatusWrapper>
