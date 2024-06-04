@@ -1,4 +1,16 @@
-import styled from 'styled-components';
+import styled, {keyframes, css} from 'styled-components';
+
+const blink = keyframes`
+  0% {
+    background-color: red;
+  }
+  50% {
+    background-color: gray;
+  }
+  100% {
+    background-color: red;
+  }
+`;
 
 const RedButton = styled.div`
   display: flex;
@@ -19,6 +31,24 @@ const GreenButton = styled(RedButton)`
 
 const GrayButton = styled(RedButton)`
   background-color: gray;
+`;
+
+const ConfirmButton = styled(RedButton)<{confirmed: boolean}>`
+  background-color: ${(props) => (props.confirmed ? 'green' : 'darkgray')};
+  cursor: pointer;
+  padding: 8px;
+  width: 100px;
+  text-align: center;
+  justify-content: center;
+  ${(props) =>
+    props.confirmed
+      ? css`
+          background-color: green;
+        `
+      : css`
+          background-color: red;
+          animation: ${blink} 1s infinite;
+        `};
 `;
 
 const AddButton = styled(RedButton)`
@@ -66,4 +96,4 @@ const BtnTitle = styled.div`
   margin: auto;
 `;
 
-export default {RedButton, GreenButton, GrayButton, AddButton, AddIcon, RedLight, GreenLight, GrayLight, BtnTitle}
+export default {RedButton, GreenButton, GrayButton, ConfirmButton, AddButton, AddIcon, RedLight, GreenLight, GrayLight, BtnTitle}
