@@ -9,6 +9,7 @@ import { getWorkersLog } from './api/getWorkersLog';
 import { deleteWorker } from './api/deleteWorkers';
 import S from './styles/AppStyles';
 import deleteicon from './images/delete-icon.png';
+import LoginPage from './LoginPage';
 
 function App() {
   interface Workers {
@@ -138,22 +139,22 @@ function App() {
       });
   };  
 
-  const [isModalOpen, setModalOpen] = useState(false);
+  const [isFallModalOpen, setFallModalOpen] = useState(false);
+  const [isAddModalOpen, setAddModalOpen] = useState(false);
   const [lastModalOpenTime, setLastModalOpenTime] = useState<Date | null>(null);
   const [modalContent, setModalContent] = useState('');
   const [buttonStatus, setButtonStatus] = useState(false);
 
-
-  const handleOpenModal = () => {
-    setModalOpen(true);
+  const handleAddOpenModal = () => {
+    setAddModalOpen(true);
   }
 
   const handleCloseModal = () => {
-    setModalOpen(false);
+    setAddModalOpen(false);
   }
 
   const handleTimeCloseModal = () => {
-    setModalOpen(false);
+    setFallModalOpen(false);
     setLastModalOpenTime(new Date()); // 모달을 닫을 때 현재 시간을 저장
   }
 
@@ -169,7 +170,7 @@ function App() {
       for (let i = 0; i < workers.length; i++) {
         if (workers[i][3].isFalling) {
           setModalContent(`${workers[i][2].district}구역에서 낙상 사고가 감지되었습니다.`);
-          setModalOpen(true); // 낙상 사고 모달창 열기
+          setFallModalOpen(true); // 낙상 사고 모달창 열기
           break;
         }
       }
@@ -222,136 +223,150 @@ function App() {
         ({ x2, y2 } = district2[districtKey]);
     }
   }
+
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);
+  };
+
   return (
-    <>
-    <S.RowWrapper>
-      <Header />
-        <S.ColumnWrapper>
-          <S.TitleText>Dashboard</S.TitleText>
-          <S.RowWrapper>
-            <S.SubTitleText>작업자 정보</S.SubTitleText>
-            <Button type='add' value={true} onclick={handleOpenModal}></Button>
-          </S.RowWrapper>
-          <S.ListWrapper>
-            <S.WorkerList>
-              <S.WorkerInfoTitle>
-                <S.WorkerInfo>조끼번호</S.WorkerInfo>
-                <S.WorkerInfo>이름</S.WorkerInfo>
-                <S.WorkerInfo>생년월일</S.WorkerInfo>
-                <S.WorkerInfo>전화번호</S.WorkerInfo>
-                <S.WorkerInfo>안전고리</S.WorkerInfo>
-                <S.WorkerInfo>낙상여부</S.WorkerInfo>
-                <S.WorkerInfo>
-                  <S.DeleteIcon active={false} src={deleteicon} />
-                </S.WorkerInfo>
-              </S.WorkerInfoTitle>
-               
-              {workers.length > 0 ? (
-                workers.map((worker, index) => {
-                  return (
-                    <>
-                    <S.WorkerInfoWrapper>
-                    <React.Fragment key={index + 1}>
-                        <S.WorkerInfo>{index + 1}</S.WorkerInfo> 
-                        <S.WorkerInfo>{worker[1].name}</S.WorkerInfo> 
-                        <S.WorkerInfo>{worker[1].birth}</S.WorkerInfo>
-                        <S.WorkerInfo>{worker[1].pn}</S.WorkerInfo>
-                        <S.WorkerInfo>
-                          <Button type="ring" value={worker[4].isSafe} ></Button>
-                        </S.WorkerInfo>
-                        <S.WorkerInfo>
-                          <Button type="fall" value={worker[3].isFalling}></Button>
-                        </S.WorkerInfo>
-                        <S.WorkerInfo>
-                          <S.DeleteIcon active={true} src={deleteicon} onClick={() => handleDelete(index)} />
-                        </S.WorkerInfo>
-                      </React.Fragment>
-                    </S.WorkerInfoWrapper>
-                    </>
-                  );
-                })
-              ): (
-                Array.from({ length: 2 }).map((_, index) => (
-                  <S.WorkerInfoWrapper>
-                  <React.Fragment key={index}>
-                    <S.WorkerInfo>{index + 1}</S.WorkerInfo>
-                    <S.WorkerInfo></S.WorkerInfo>
-                    <S.WorkerInfo></S.WorkerInfo>
-                    <S.WorkerInfo></S.WorkerInfo>
+    isLoggedIn ? (
+      <>
+        <S.RowWrapper>
+          <Header />
+            <S.ColumnWrapper>
+              <S.TitleText>Safety Management</S.TitleText>
+              <S.RowWrapper>
+                <S.SubTitleText>작업자 정보</S.SubTitleText>
+                <Button type='add' value={true} onclick={handleAddOpenModal}></Button>
+              </S.RowWrapper>
+              <S.ListWrapper>
+                <S.WorkerList>
+                  <S.WorkerInfoTitle>
+                    <S.WorkerInfo>조끼번호</S.WorkerInfo>
+                    <S.WorkerInfo>이름</S.WorkerInfo>
+                    <S.WorkerInfo>생년월일</S.WorkerInfo>
+                    <S.WorkerInfo>전화번호</S.WorkerInfo>
+                    <S.WorkerInfo>안전고리</S.WorkerInfo>
+                    <S.WorkerInfo>낙상여부</S.WorkerInfo>
                     <S.WorkerInfo>
-                      <Button type="ring" value={null}></Button>
+                      <S.DeleteIcon active={false} src={deleteicon} />
                     </S.WorkerInfo>
-                    <S.WorkerInfo>
-                      <Button type="fall" value={null}></Button>
-                    </S.WorkerInfo>
-                    <S.WorkerInfo>
-                          <S.DeleteIcon active={false} src={deleteicon} onClick={() => handleDelete(index)} />
-                        </S.WorkerInfo>
-                  </React.Fragment>
-                  </S.WorkerInfoWrapper>
-                ))
-              )
-            }
-            </S.WorkerList>
-          </S.ListWrapper>
-          <S.RowWrapper>
-          <S.ColumnWrapper>
-          <S.SubTitleText>구역 정보</S.SubTitleText>
-            <S.FloorPlanWrapper>
-              <S.FloorPlan>
-                  {/* 작업자 구역 표시 */}
-                  {workers[0] ? <Point x={x1} y={y1} index={1} content={workers[0][1] ? workers[0][1].name : ''} /> : <></>}
-                  {workers[1] ? <Point x={x1} y={y1} index={2} content={workers[1][1] ? workers[1][1].name : ''} /> : <></>}
+                  </S.WorkerInfoTitle>
                   
-                  {/* 작업자 추가 및 수정창 */}
-                  <Modal type='add' isOpened={isModalOpen} onClose={handleCloseModal} content={`작업자 정보 수정`}></Modal>
-                  {/* 낙상 사고 발생 시 알림창 */}
-                  {isModalOpen && (
-                    <Modal
-                      type='alarm'
-                      isOpened={isModalOpen}
-                      onClose={handleTimeCloseModal}
-                      content={modalContent}
-                    ></Modal>
-                  )}
-                </S.FloorPlan>
-              </S.FloorPlanWrapper>
-              </S.ColumnWrapper>
+                  {workers.length > 0 ? (
+                    workers.map((worker, index) => {
+                      return (
+                        <>
+                        <S.WorkerInfoWrapper>
+                        <React.Fragment key={index + 1}>
+                            <S.WorkerInfo>{index + 1}</S.WorkerInfo> 
+                            <S.WorkerInfo>{worker[1].name}</S.WorkerInfo> 
+                            <S.WorkerInfo>{worker[1].birth}</S.WorkerInfo>
+                            <S.WorkerInfo>{worker[1].pn}</S.WorkerInfo>
+                            <S.WorkerInfo>
+                              <Button type="ring" value={worker[4].isSafe} ></Button>
+                            </S.WorkerInfo>
+                            <S.WorkerInfo>
+                              <Button type="fall" value={worker[3].isFalling}></Button>
+                            </S.WorkerInfo>
+                            <S.WorkerInfo>
+                              <S.DeleteIcon active={true} src={deleteicon} onClick={() => handleDelete(index)} />
+                            </S.WorkerInfo>
+                          </React.Fragment>
+                        </S.WorkerInfoWrapper>
+                        </>
+                      );
+                    })
+                  ): (
+                    Array.from({ length: 2 }).map((_, index) => (
+                      <S.WorkerInfoWrapper>
+                      <React.Fragment key={index}>
+                        <S.WorkerInfo>{index + 1}</S.WorkerInfo>
+                        <S.WorkerInfo></S.WorkerInfo>
+                        <S.WorkerInfo></S.WorkerInfo>
+                        <S.WorkerInfo></S.WorkerInfo>
+                        <S.WorkerInfo>
+                          <Button type="ring" value={null}></Button>
+                        </S.WorkerInfo>
+                        <S.WorkerInfo>
+                          <Button type="fall" value={null}></Button>
+                        </S.WorkerInfo>
+                        <S.WorkerInfo>
+                              <S.DeleteIcon active={false} src={deleteicon} onClick={() => handleDelete(index)} />
+                            </S.WorkerInfo>
+                      </React.Fragment>
+                      </S.WorkerInfoWrapper>
+                    ))
+                  )
+                }
+                </S.WorkerList>
+              </S.ListWrapper>
+              <S.RowWrapper>
               <S.ColumnWrapper>
-                <S.SubTitleText>낙상 사고 현황</S.SubTitleText>
-                <S.StatusWrapper>
-                  <S.ListWrapper>
-                    <S.WorkerList>
-                      <S.WorkerInfoTitle>
-                        <S.WorkerInfo>발생 시각</S.WorkerInfo> 
-                        <S.WorkerInfo>이름</S.WorkerInfo> 
-                        <S.WorkerInfo>구역</S.WorkerInfo>
-                        <S.WorkerInfo>조치</S.WorkerInfo>
-                      </S.WorkerInfoTitle>
-                      {workerslog.length > 0 ? (
-                        workerslog.map((workerlog, index) => {
-                          return (
-                            <S.WorkerInfoWrapper>
-                              <S.WorkerInfo>{workerlog.timestamp ? workerlog.timestamp.toLocaleString() : '날짜 없음'}</S.WorkerInfo> 
-                              <S.WorkerInfo>{workerlog.name}</S.WorkerInfo> 
-                              <S.WorkerInfo>{workerlog.district}</S.WorkerInfo>
-                              <S.WorkerInfo>
-                                <Button type='confirm' value={true}></Button>
-                              </S.WorkerInfo>
-                            </S.WorkerInfoWrapper>  
-                          )
-                          })
-                      ): (
-                        <></>
+              <S.SubTitleText>구역 정보</S.SubTitleText>
+                <S.FloorPlanWrapper>
+                  <S.FloorPlan>
+                      {/* 작업자 구역 표시 */}
+                      {workers[0] ? <Point x={x1} y={y1} index={1} content={workers[0][1] ? workers[0][1].name : ''} /> : <></>}
+                      {workers[1] ? <Point x={x2} y={y2} index={2} content={workers[1][1] ? workers[1][1].name : ''} /> : <></>}
+                      
+                      {/* 작업자 추가 및 수정창 */}
+                      <Modal type='add' isOpened={isAddModalOpen} onClose={handleCloseModal} content={`작업자 정보 수정`}></Modal>
+                      {/* 낙상 사고 발생 시 알림창 */}
+                      {isFallModalOpen && (
+                        <Modal
+                          type='alarm'
+                          isOpened={isFallModalOpen}
+                          onClose={handleTimeCloseModal}
+                          content={modalContent}
+                        ></Modal>
                       )}
-                    </S.WorkerList>
-                  </S.ListWrapper>
-                </S.StatusWrapper>
-              </S.ColumnWrapper> 
-            </S.RowWrapper>
-          </S.ColumnWrapper>   
-      </S.RowWrapper>
-    </>
+                    </S.FloorPlan>
+                  </S.FloorPlanWrapper>
+                  </S.ColumnWrapper>
+                  <S.ColumnWrapper>
+                    <S.SubTitleText>낙상 사고 현황</S.SubTitleText>
+                    <S.StatusWrapper>
+                      <S.ListWrapper>
+                        <S.WorkerList>
+                          <S.WorkerInfoTitle>
+                            <S.WorkerInfo>발생 시각</S.WorkerInfo> 
+                            <S.WorkerInfo>이름</S.WorkerInfo> 
+                            <S.WorkerInfo>구역</S.WorkerInfo>
+                            <S.WorkerInfo>조치</S.WorkerInfo>
+                          </S.WorkerInfoTitle>
+                          {workerslog.length > 0 ? (
+                            workerslog.map((workerlog, index) => {
+                              return (
+                                <S.WorkerInfoWrapper>
+                                  <S.WorkerInfo>{workerlog.timestamp ? workerlog.timestamp.toLocaleString() : '날짜 없음'}</S.WorkerInfo> 
+                                  <S.WorkerInfo>{workerlog.name}</S.WorkerInfo> 
+                                  <S.WorkerInfo>{workerlog.district}</S.WorkerInfo>
+                                  <S.WorkerInfo>
+                                    <Button type='confirm' value={true}></Button>
+                                  </S.WorkerInfo>
+                                </S.WorkerInfoWrapper>  
+                              )
+                              })
+                          ): (
+                            <></>
+                          )}
+                        </S.WorkerList>
+                      </S.ListWrapper>
+                    </S.StatusWrapper>
+                  </S.ColumnWrapper> 
+                </S.RowWrapper>
+              </S.ColumnWrapper>   
+          </S.RowWrapper>
+        </>
+    ) : (
+      <>
+        <LoginPage onLoginSuccess={handleLoginSuccess}/>
+      </>
+    )
+    
     
   );
 }
