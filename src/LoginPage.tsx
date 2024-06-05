@@ -1,8 +1,8 @@
-import React, { useState, ChangeEvent } from 'react';
+import React, { useState, ChangeEvent, FormEvent } from 'react';
 import styled from 'styled-components';
 
 interface LoginPageProps {
-    onLoginSuccess: () => void;
+  onLoginSuccess: () => void;
 }
 
 const Container = styled.div`
@@ -13,28 +13,28 @@ const Container = styled.div`
   align-items: center; /* 수직 중앙 정렬 */
 `;
 
-const Form = styled.div`
-    position: absolute;
-    top: 25%;
-    left: 35%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: auto;
-    width: 500px;
-    height: 300px;
-    background-color: black;
-    justify-content:center;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5)
+const Form = styled.form`
+  position: absolute;
+  top: 25%;
+  left: 35%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: auto;
+  width: 500px;
+  height: 300px;
+  background-color: black;
+  justify-content:center;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5)
 `;
 
 const Label = styled.div`
-    font-size: 20px;
-    font-weight: 500;
-    text-align: center;
-    margin-bottom: 20px;
-    color: white;
+  font-size: 20px;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 20px;
+  color: white;
 `;
 
 const Input = styled.input`
@@ -74,20 +74,22 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
     setPassword(event.target.value);
   };
 
-  const handleSubmit = async (event: ChangeEvent<HTMLInputElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-        const response = await fetch('/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ password }),
-    })
-    if (response.ok) {
+      const response = await fetch('/api/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ password }),
+      })
+      if (response.ok) {
         const data = await response.json();
         if (data.success) {
           onLoginSuccess();
+          alert('로그인되었습니다.')
+          console.log('success!!!');
         } else {
           alert('비밀번호가 틀렸습니다.');
         }
@@ -98,7 +100,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
     } catch (error) {
       // 네트워크 에러 처리
       alert('로그인 중 오류가 발생했습니다.');
-      console.error('Login error:', error);
+      console.error(error);
     }
   };
 
@@ -109,7 +111,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           Alt Safety Management
         </Label>
         <Input type="password" value={password} onChange={handlePasswordChange} placeholder={'비밀번호를 입력하세요.'}/>
-        <Button>확인</Button>
+        <Button type="submit">확인</Button>
       </Form>
     </Container>
   );
