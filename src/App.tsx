@@ -34,7 +34,7 @@ function App() {
   useEffect(() => {
       fetchWorkers();
 
-      const interval = setInterval(fetchWorkers, 2000);  // 2초마다 업데이트
+      const interval = setInterval(fetchWorkers, 1000);  // 1초마다 업데이트
 
       return () => clearInterval(interval);
   }, []);
@@ -54,7 +54,7 @@ function App() {
   useEffect(() => {
     fetchWorkerslog();
 
-    const interval = setInterval(fetchWorkerslog, 2000);  // 3초마다 업데이트
+    const interval = setInterval(fetchWorkerslog, 1000);  // 1초마다 업데이트
 
     return () => clearInterval(interval);
   }, []);
@@ -331,7 +331,7 @@ function App() {
                           <S.WorkerInfo>조치</S.WorkerInfo>
                         </S.WorkerInfoTitle>
                         {workerslog.length > 0 ? (
-                          workerslog.map((workerlog, index) => {
+                          [...workerslog].reverse().map((workerlog, index) => {
                             return (
                               <S.WorkerInfoWrapper>
                                 <S.WorkerInfo>{workerlog.timestamp ? workerlog.timestamp.toLocaleString() : '날짜 없음'}</S.WorkerInfo> 

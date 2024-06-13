@@ -1,22 +1,21 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate } from 'react-router-dom';
 import App from './App';
 import LoginPage from './LoginPage';
 
 const Main: React.FC = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const handleLoginSuccess = () => {
-    setIsLoggedIn(true);
+    navigate('/');
   };
 
   return (
-    <Router>
-      <Routes>
-        <Route path="/login" element={<LoginPage onLoginSuccess={handleLoginSuccess} />} />
-        <Route path="/" element={isLoggedIn ? <App /> : <Navigate to="/login" />} />
-      </Routes>
-    </Router>
+    <Routes>
+      <Route path="/" element={<App />} />
+      <Route path="/login" element={<LoginPage onLoginSuccess={handleLoginSuccess} />} />
+      <Route path="*" element={<Navigate to="/login" replace />} />
+    </Routes>
   );
 };
 
